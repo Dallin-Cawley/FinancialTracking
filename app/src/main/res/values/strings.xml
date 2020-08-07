@@ -1,0 +1,28 @@
+<resources>
+    <string name="app_name">TransactionTracking</string>
+    <string name="plaid_button_text">Plaid API</string>
+    <string name="biometric_button_text">Biometric Security</string>
+    <string name="plaid_sandbox_api_public_key">91999e67d179ebcadfd577c952ede4</string>
+    <string name="plaid_development_api_public_key">91999e67d179ebcadfd577c952ede4</string>
+    <string name="public_token_result">public_token:\n%s</string>
+    <string name="content_error">There was an error:\n\"%1$s\
+        \n\nVisit <a href="https://plaid.com/docs/#errors">https://plaid.com/docs/#errors</a> for more information on the error code below
+    \nError Code: <b>%2$s</b></string>
+    <string name="content_cancel">You left Link without completing the flow. Reason: %1$s</string>
+    <string name="startup_settings">startUpSettings/startupSettings.txt</string>
+    <string name="login">Login</string>
+    <string name="username_hint">Username</string>
+    <string name="password_hint">Password</string>
+    <string name="dialog_title">Welcome!</string>
+    <string name="dialog_subTitle">We need some information from you to begin</string>
+    <string name="first_name">First Name</string>
+    <string name="last_name">Last Name</string>
+    <string name="positive_button_cont">Continue</string>
+    <string name="negative_button_dialog">Cancel</string>
+    <string name="key_alias">_androidx_security_master_key_</string>
+    <string name="biometric_checkbox">Use biometrics as default login</string>
+    <string name="remember_me">Remember me</string>
+    <string name="biometric_login">Biometric Login</string>
+    <string name="add_button">Add button</string>
+
+</resources>
