@@ -38,7 +38,7 @@ public class Item implements Serializable {
 
     public void handleCompletionState(CompletionState completionState) throws IOException {
         if (completionState == CompletionState.CREDENTIAL_SUCCESS) {
-            PlaidHandler.getPlaidHandlerIntstance().handleState(this, completionState);
+            PlaidHandler.getPlaidHandlerInstance().handleState(this, completionState);
         }
     }
 }

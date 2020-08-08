@@ -1,7 +1,6 @@
 package com.financial.transactiontracking;
 
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ViewTreeObserver;
@@ -11,7 +10,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.gson.Gson;
 import com.plaid.link.Plaid;
 import com.plaid.link.configuration.LinkConfiguration;
 import com.plaid.link.configuration.PlaidEnvironment;
@@ -35,10 +33,10 @@ public class FinancialHomeActivity extends AppCompatActivity {
                 try {
                     Item newItem = new Item(linkSuccess);
                     layoutManager.createCardViews(newItem.accounts, newItem.institutionName);
-                    PlaidHandler.getPlaidHandlerIntstance().executeTask(new HomeSocketRunnable(linkSuccess.publicToken, newItem), this);
+                    PlaidHandler.getPlaidHandlerInstance().executeTask(new HomeSocketRunnable(linkSuccess.publicToken, newItem), this);
                     loggedUser.addInstitution(newItem);
                     UserSerializationManagement.saveUser(FinancialHomeActivity.this, loggedUser);
-                    PlaidHandler.getPlaidHandlerIntstance().executeTask(new PlaidAPIRunnable(new PlaidAPIConnection()));
+                    PlaidHandler.getPlaidHandlerInstance().executeTask(new PlaidBalanceRunnable(loggedUser.getInstitutions().get(0)));
                 } catch (Exception e) {
                     System.out.println(e.getMessage());
                     e.printStackTrace();
@@ -83,6 +81,7 @@ public class FinancialHomeActivity extends AppCompatActivity {
 
         if (loggedUser.getInstitutions().size() > 0) {
             ViewTreeObserver vto = parentLinearLayout.getViewTreeObserver();
+            PlaidHandler.getPlaidHandlerInstance().executeTask(new PlaidBalanceRunnable(loggedUser.getInstitutions().get(0)), FinancialHomeActivity.this);
             vto.addOnGlobalLayoutListener (new ViewTreeObserver.OnGlobalLayoutListener() {
                 @Override
                 public void onGlobalLayout() {
@@ -94,9 +93,6 @@ public class FinancialHomeActivity extends AppCompatActivity {
                     for (int i = 0; i < institutionsSize; i++) {
                         layoutManager.createCardViews(institutions.get(i).accounts, institutions.get(i).institutionName);
                     }
-
-                    PlaidHandler.getPlaidHandlerIntstance().executeTask(new PlaidAPIRunnable(new PlaidAPIConnection()));
-
                 }
             });
         }

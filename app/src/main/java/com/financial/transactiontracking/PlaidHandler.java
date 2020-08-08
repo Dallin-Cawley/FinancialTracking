@@ -13,7 +13,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 public class PlaidHandler {
-    private static PlaidHandler plaidHandlerIntstance = null;
+    private static PlaidHandler plaidHandlerInstance = null;
     final BlockingQueue<Runnable> threadQueue;
     private final ThreadPoolExecutor threadPoolExecutor;
 
@@ -26,7 +26,7 @@ public class PlaidHandler {
 
 
     static {
-        plaidHandlerIntstance = new PlaidHandler();
+        plaidHandlerInstance = new PlaidHandler();
     }
 
 
@@ -59,8 +59,8 @@ public class PlaidHandler {
         threadPoolExecutor.execute(runnable);
     }
 
-    public static PlaidHandler getPlaidHandlerIntstance() {
-        return plaidHandlerIntstance;
+    public static PlaidHandler getPlaidHandlerInstance() {
+        return plaidHandlerInstance;
     }
 
     public void handleState (Object object, CompletionState completionState) throws IOException {
