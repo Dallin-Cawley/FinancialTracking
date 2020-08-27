@@ -1,11 +1,13 @@
 package com.financial.transactiontracking;
 
+import com.google.gson.Gson;
 import com.plaid.link.result.LinkAccount;
 import com.plaid.link.result.LinkSuccess;
 
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class Item implements Serializable {
@@ -14,18 +16,30 @@ public class Item implements Serializable {
     String institutionName;
     String linkSessionId;
     List<FinancialAccount> accounts;
+    ArrayList<FinancialAccount> preferredAccounts;
 
     public Item(LinkSuccess linkSuccess) throws Exception {
-        System.out.println("Creating Local Item Class.");
-        this.accounts = new ArrayList<FinancialAccount>();
+        this.accounts = new ArrayList<>();
         this.institutionName = linkSuccess.metadata.institutionName;
         this.institutionId = linkSuccess.metadata.institutionId;
         this.linkSessionId = linkSuccess.metadata.linkSessionId;
+        this.preferredAccounts = new ArrayList<>();
 
         for (LinkAccount account : linkSuccess.metadata.accounts) {
-            this.accounts.add(new FinancialAccount(account));
-        }
+            System.out.println("Account subType: " + account.accountSubType);
+            FinancialAccount newAccount = new FinancialAccount(account);
+            this.accounts.add(newAccount);
 
+            if (account.accountSubType == null) {
+                continue;
+            }
+            if (account.accountSubType.equals("checking")) {
+                preferredAccounts.add(newAccount);
+            }
+            if (account.accountSubType.equals("savings")) {
+                preferredAccounts.add(newAccount);
+            }
+        }
     }
 
     public String getAccessToken() {
@@ -36,9 +50,30 @@ public class Item implements Serializable {
         this.credentials = credentials;
     }
 
-    public void handleCompletionState(CompletionState completionState) throws IOException {
-        if (completionState == CompletionState.CREDENTIAL_SUCCESS) {
-            PlaidHandler.getPlaidHandlerInstance().handleState(this, completionState);
+    private void setAccountBalances(String balances) {
+        PlaidBalanceResponseObject plaidBalanceResponseObject =  new Gson().fromJson(balances, PlaidBalanceResponseObject.class);
+        ArrayList<Account> accountResponse = plaidBalanceResponseObject.accounts;
+
+        for (Account account : accountResponse) {
+            for (int i = 0; i < accounts.size(); i++) {
+                if (account.accountId.equals(accounts.get(i).accountId)) {
+                    System.out.println("Found account");
+                    accounts.get(i).addBalance(account);
+                    break;
+                }
+            }
+        }
+    }
+
+
+    public void handleCompletionState(CompletionState completionState, String object) throws IOException {
+        switch (completionState){
+            case PLAID_BALANCE_SUCCESS:
+                setAccountBalances(object);
+                PlaidHandler.getPlaidHandlerInstance().handleState(this, completionState);
+                break;
+            default:
+                PlaidHandler.getPlaidHandlerInstance().handleState(this, completionState);
         }
     }
 }

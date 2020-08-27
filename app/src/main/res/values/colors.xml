@@ -8,4 +8,6 @@
     <color name="colorLowGray">#D8D8D8</color>
     <color name="colorWhite">#FFFFFF</color>
     <color name="colorMaroon">#800000</color>
+    <color name="colorFadedGray">#A09C9C</color>
+    <color name="colorDarkFadedGray">#827D7D</color>
 </resources>

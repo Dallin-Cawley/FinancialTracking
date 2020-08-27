@@ -166,7 +166,6 @@ public class LoginHandler {
                 "Authentication succeeded!", Toast.LENGTH_SHORT).show();
         updateLoginPreferences();
         Intent financialHomeIntent = new Intent(activity, FinancialHomeActivity.class);
-        System.out.println("User before sending: " + loggedUser);
         financialHomeIntent.putExtra("user", loggedUser);
         activity.startActivity(financialHomeIntent);
     }

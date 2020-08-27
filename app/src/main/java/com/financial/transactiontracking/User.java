@@ -27,7 +27,9 @@ public class User implements Serializable {
     }
 
     public void addInstitution(Item newItem) {
-        institutions.add(newItem);
+        if (institutions.indexOf(newItem) < 0) {
+            institutions.add(newItem);
+        }
     }
 
     public String getFirstName() {

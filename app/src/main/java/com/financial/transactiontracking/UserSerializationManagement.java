@@ -34,6 +34,7 @@ public class UserSerializationManagement {
 
     public static User loadUser(Activity activity, boolean firstTime) {
             if (firstTime) {
+                System.out.println("User first time");
                 return new User();
             }
 

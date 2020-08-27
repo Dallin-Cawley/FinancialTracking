@@ -7,6 +7,8 @@ import android.os.Message;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -38,9 +40,17 @@ public class PlaidHandler {
                     case 1: //CompletionState.CREDENTIAL_SUCCESS
                         Item item = (Item) message.obj;
                         financialHomeActivity.addItem(item);
+                        break;
                     case 2:
-                        financialHomeActivity.printPlaidResult((String) message.obj);
+                        System.out.println("Got to Plaid Handler");
+                        break;
+                    case 3:  //CompletionState.PLAID_BALANCE_SUCCESS
+                        Item balanceItem = (Item) message.obj;
+                        financialHomeActivity.layoutManager.createCardViews(balanceItem.preferredAccounts, balanceItem.institutionName);
                 }
+
+                financialHomeActivity.serializeUser();
+
 
             }
         };
@@ -68,8 +78,12 @@ public class PlaidHandler {
             case CREDENTIAL_SUCCESS:
                 Item item = (Item) object;
                 plaidHandler.obtainMessage(1, item).sendToTarget();
+                break;
             case PLAID_SUCCESS:
                 plaidHandler.obtainMessage(2, object).sendToTarget();
+                break;
+            case PLAID_BALANCE_SUCCESS:
+                plaidHandler.obtainMessage(3, object).sendToTarget();
 
         }
     }

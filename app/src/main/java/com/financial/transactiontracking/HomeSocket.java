@@ -77,4 +77,8 @@ public class HomeSocket extends Socket {
 
         return new String(message);
     }
+
+    public static HomeSocket buildSocket(String ip, int port) throws IOException {
+        return new HomeSocket(ip, port);
+    }
 }

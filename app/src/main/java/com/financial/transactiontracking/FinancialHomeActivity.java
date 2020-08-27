@@ -8,6 +8,7 @@ import android.widget.LinearLayout;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.GestureDetectorCompat;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.plaid.link.Plaid;
@@ -26,17 +27,16 @@ public class FinancialHomeActivity extends AppCompatActivity {
     FloatingActionButton addInstitution;
     LayoutManager layoutManager;
     private User loggedUser;
+    private GestureDetectorCompat gesture;
 
     private PlaidLinkResultHandler myPlaidResultHandler = new PlaidLinkResultHandler(
             linkSuccess -> {
-                System.out.println("Successfully created Item");
                 try {
                     Item newItem = new Item(linkSuccess);
-                    layoutManager.createCardViews(newItem.accounts, newItem.institutionName);
-                    PlaidHandler.getPlaidHandlerInstance().executeTask(new HomeSocketRunnable(linkSuccess.publicToken, newItem), this);
                     loggedUser.addInstitution(newItem);
-                    UserSerializationManagement.saveUser(FinancialHomeActivity.this, loggedUser);
-                    PlaidHandler.getPlaidHandlerInstance().executeTask(new PlaidBalanceRunnable(loggedUser.getInstitutions().get(0)));
+
+                    PlaidHandler.getPlaidHandlerInstance().executeTask(new HomeSocketRunnable(linkSuccess.publicToken, newItem), this);
+                    PlaidHandler.getPlaidHandlerInstance().executeTask(new PlaidBalanceRunnable(loggedUser.getInstitutions().get(loggedUser.getInstitutions().size() - 1)));
                 } catch (Exception e) {
                     System.out.println(e.getMessage());
                     e.printStackTrace();
@@ -56,6 +56,7 @@ public class FinancialHomeActivity extends AppCompatActivity {
         setContentView(R.layout.financial_home);
         parentLinearLayout = findViewById(R.id.parent_linear_layout);
         addInstitution = findViewById(R.id.floating_action_buton);
+        gesture = new GestureDetectorCompat(this, new GestureHandler());
 
         layoutManager = new LayoutManager(parentLinearLayout, FinancialHomeActivity.this);
         Intent intent = getIntent();
@@ -81,7 +82,6 @@ public class FinancialHomeActivity extends AppCompatActivity {
 
         if (loggedUser.getInstitutions().size() > 0) {
             ViewTreeObserver vto = parentLinearLayout.getViewTreeObserver();
-            PlaidHandler.getPlaidHandlerInstance().executeTask(new PlaidBalanceRunnable(loggedUser.getInstitutions().get(0)), FinancialHomeActivity.this);
             vto.addOnGlobalLayoutListener (new ViewTreeObserver.OnGlobalLayoutListener() {
                 @Override
                 public void onGlobalLayout() {
@@ -89,9 +89,9 @@ public class FinancialHomeActivity extends AppCompatActivity {
                             .removeOnGlobalLayoutListener(this);
 
                     List<Item> institutions = loggedUser.getInstitutions();
-                    int institutionsSize = institutions.size();
-                    for (int i = 0; i < institutionsSize; i++) {
-                        layoutManager.createCardViews(institutions.get(i).accounts, institutions.get(i).institutionName);
+                    int length = institutions.size();
+                    for (int i = 0; i < length; i++) {
+                        PlaidHandler.getPlaidHandlerInstance().executeTask(new PlaidBalanceRunnable(institutions.get(i)), FinancialHomeActivity.this);
                     }
                 }
             });
@@ -107,11 +107,17 @@ public class FinancialHomeActivity extends AppCompatActivity {
     }
 
     public void addItem(Item item){
+        System.out.println("Adding item");
         loggedUser.addInstitution(item);
+        System.out.println("Number of institutions: " + loggedUser.getInstitutions().size());
         System.out.println("Item Access Token: " + item.getAccessToken());
     }
 
     public void printPlaidResult(String result) {
         System.out.println("Plaid Result:\n" + result);
+    }
+
+    public void serializeUser() {
+        UserSerializationManagement.saveUser(FinancialHomeActivity.this, loggedUser);
     }
 }
