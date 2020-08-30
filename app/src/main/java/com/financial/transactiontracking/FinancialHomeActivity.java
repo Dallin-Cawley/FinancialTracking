@@ -53,7 +53,7 @@ public class FinancialHomeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.financial_home);
+        setContentView(R.layout.menu_drawer);
         parentLinearLayout = findViewById(R.id.parent_linear_layout);
         addInstitution = findViewById(R.id.floating_action_buton);
         gesture = new GestureDetectorCompat(this, new GestureHandler());

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/financial_home_nav"
+    app:startDestination="@id/transactions">
+
+    <fragment
+        android:id="@+id/transactions"
+        android:name="com.financial.transactiontracking.Transactions"
+        android:label="fragment_transactions"
+        tools:layout="@layout/fragment_transactions" />
+    <activity
+        android:id="@+id/financialHomeActivity"
+        android:name="com.financial.transactiontracking.FinancialHomeActivity"
+        android:label="FinancialHomeActivity" >
+        <action
+            android:id="@+id/transactions2"
+            app:destination="@id/transactions"
+            app:enterAnim="@anim/fragment_close_enter"
+            app:exitAnim="@anim/fragment_close_exit"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+    </activity>
+</navigation>
