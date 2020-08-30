@@ -69,13 +69,16 @@ public class HomeSocket extends Socket {
 
 
         //Read from the InputStream until the message is completely received
-        char[] message = new char[sizeBody.size];
+        StringBuilder message = new StringBuilder();
         numRead = 0;
         while (numRead < sizeBody.size) {
-            numRead = inputStreamReader.read(message, 0, sizeBody.size);
+            char[] temp = new char[sizeBody.size];
+            numRead += inputStreamReader.read(temp, 0, sizeBody.size);
+            message.append(temp);
+            message.replace(0, message.length() - 1, message.substring(0, numRead));
         }
 
-        return new String(message);
+        return message.toString();
     }
 
     public static HomeSocket buildSocket(String ip, int port) throws IOException {
